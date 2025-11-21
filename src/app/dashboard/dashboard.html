@@ -22,7 +22,7 @@
     <div class="content-wrapper">
       <!-- Welcome Section -->
       <section class="welcome-section">
-        <h1 class="welcome-title">Вітаємо, {{ userName }}! 👋</h1>
+        <h1 class="welcome-title">Вітаємо, {{ userName }}е! 👋</h1>
         <p class="welcome-subtitle">Ваша панель амбасадора</p>
       </section>
 
@@ -53,8 +53,42 @@
         </div>
       </section>
 
-      <!-- Active Tasks Section -->
-      <section class="tasks-section">
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs">
+        <button
+          class="nav-tab"
+          [class.active]="currentView === 'tasks'"
+          (click)="setView('tasks')">
+          📋 Завдання
+        </button>
+        <button
+          class="nav-tab"
+          [class.active]="currentView === 'events'"
+          (click)="setView('events')">
+          📅 Події
+        </button>
+        <button
+          class="nav-tab"
+          [class.active]="currentView === 'leaderboard'"
+          (click)="setView('leaderboard')">
+          🏆 Рейтинг
+        </button>
+        <button
+          class="nav-tab"
+          [class.active]="currentView === 'prizes'"
+          (click)="setView('prizes')">
+          🎁 Призи
+        </button>
+        <button
+          class="nav-tab"
+          [class.active]="currentView === 'chat'"
+          (click)="setView('chat')">
+          💬 Чат
+        </button>
+      </nav>
+
+      <!-- Tasks View -->
+      <section class="tasks-view" *ngIf="currentView === 'tasks'">
         <div class="section-header">
           <h2 class="section-title">Активні завдання</h2>
           <span class="task-count">{{ activeTasks.length }}</span>
@@ -94,26 +128,143 @@
         </div>
       </section>
 
-      <!-- Completed Tasks Section -->
-      <section class="tasks-section completed-section" *ngIf="completedTasksList.length > 0">
+      <!-- Events View -->
+      <section class="events-view" *ngIf="currentView === 'events'">
         <div class="section-header">
-          <h2 class="section-title">Завершені завдання</h2>
-          <span class="task-count">{{ completedTasksList.length }}</span>
+          <h2 class="section-title">Найближчі події</h2>
+          <span class="task-count">{{ upcomingEvents.length }}</span>
         </div>
 
-        <div class="completed-tasks-list">
-          <div *ngFor="let task of completedTasksList" class="completed-task-item">
-            <div class="completed-task-info">
-              <div class="completed-task-check">✓</div>
-              <div>
-                <div class="completed-task-title">{{ task.title }}</div>
-                <div class="completed-task-category">{{ task.category }}</div>
+        <div class="events-grid">
+          <div *ngFor="let event of upcomingEvents" class="event-card">
+            <div class="event-type-badge" [class]="event.type">
+              {{ event.type === 'online' ? '🌐 Онлайн' : '📍 Офлайн' }}
+            </div>
+
+            <h3 class="event-title">{{ event.title }}</h3>
+            <p class="event-description">{{ event.description }}</p>
+
+            <div class="event-details">
+              <div class="event-detail">
+                <span class="detail-icon">📅</span>
+                <span class="detail-text">{{ formatDateTime(event.date) }}</span>
+              </div>
+              <div class="event-detail">
+                <span class="detail-icon">📍</span>
+                <span class="detail-text">{{ event.location }}</span>
+              </div>
+              <div class="event-detail">
+                <span class="detail-icon">👥</span>
+                <span class="detail-text">{{ event.attendees }}/{{ event.maxAttendees }} учасників</span>
               </div>
             </div>
-            <div class="completed-task-credits">
-              <span class="credit-icon">💎</span>
-              <span class="credit-value">+{{ task.credits }}</span>
+
+            <div class="event-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="(event.attendees / event.maxAttendees) * 100"></div>
+              </div>
             </div>
+
+            <app-button class="event-action-btn" (click)="attendEvent(event.id)">
+              Зареєструватися
+            </app-button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Leaderboard View -->
+      <section class="leaderboard-view" *ngIf="currentView === 'leaderboard'">
+        <div class="section-header">
+          <h2 class="section-title">Таблиця лідерів</h2>
+          <span class="task-count">Топ {{ leaderboard.length }}</span>
+        </div>
+
+        <div class="leaderboard-list">
+          <div *ngFor="let user of leaderboard" class="leaderboard-item" [class.current-user]="user.name.includes(userName)">
+            <div class="rank-badge" [class]="getRankColor(user.rank)">
+              <span class="rank-number">{{ user.rank }}</span>
+            </div>
+
+            <div class="user-avatar-large">{{ user.avatar }}</div>
+
+            <div class="user-info">
+              <div class="user-name-large">{{ user.name }}</div>
+              <div class="user-stats">
+                <span class="stat-item">💎 {{ user.credits }}</span>
+                <span class="stat-item">✅ {{ user.tasksCompleted }} завдань</span>
+              </div>
+            </div>
+
+            <div class="leaderboard-credits">
+              {{ user.credits }}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Prizes View -->
+      <section class="prizes-view" *ngIf="currentView === 'prizes'">
+        <div class="section-header">
+          <h2 class="section-title">Магазин призів</h2>
+          <span class="task-count">{{ availablePrizes.length }} доступно</span>
+        </div>
+
+        <div class="prizes-grid">
+          <div *ngFor="let prize of prizes" class="prize-card" [class.unavailable]="!prize.available || !canAffordPrize(prize.credits)">
+            <div class="prize-image">{{ prize.image }}</div>
+
+            <div class="prize-category">{{ prize.category }}</div>
+            <h3 class="prize-title">{{ prize.title }}</h3>
+            <p class="prize-description">{{ prize.description }}</p>
+
+            <div class="prize-cost">
+              <span class="credit-icon">💎</span>
+              <span class="credit-value">{{ prize.credits }}</span>
+            </div>
+
+            <app-button
+              class="prize-action-btn"
+              [class.disabled]="!prize.available || !canAffordPrize(prize.credits)"
+              (click)="redeemPrize(prize.id)">
+              <span *ngIf="!prize.available">Недоступно</span>
+              <span *ngIf="prize.available && !canAffordPrize(prize.credits)">Недостатньо кредитів</span>
+              <span *ngIf="prize.available && canAffordPrize(prize.credits)">Обміняти</span>
+            </app-button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Chat View -->
+      <section class="chat-view" *ngIf="currentView === 'chat'">
+        <div class="section-header">
+          <h2 class="section-title">Чат амбасадорів</h2>
+          <span class="task-count">Онлайн</span>
+        </div>
+
+        <div class="chat-container">
+          <div class="chat-messages">
+            <div *ngFor="let msg of chatMessages" class="chat-message" [class.own-message]="msg.isOwn">
+              <div class="message-avatar">{{ msg.avatar }}</div>
+              <div class="message-content">
+                <div class="message-header">
+                  <span class="message-sender">{{ msg.sender }}</span>
+                  <span class="message-time">{{ formatTime(msg.timestamp) }}</span>
+                </div>
+                <div class="message-text">{{ msg.message }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-input-container">
+            <app-text-field
+              placeholder="Напишіть повідомлення..."
+              type="text"
+              [value]="chatMessage"
+              (valueChange)="chatMessage = $event">
+            </app-text-field>
+            <app-button class="send-btn" (click)="sendMessage()">
+              Надіслати
+            </app-button>
           </div>
         </div>
       </section>
