@@ -1,0 +1,123 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <a routerLink="/">
+        <img src="SFLU_ambassador_logo.svg" alt="Logo" class="logo-image" height="100px" width="100px" draggable="false"/>
+      </a>
+    </div>
+    <div class="header-actions">
+      <div class="user-profile">
+        <span class="user-name">{{ userName }}</span>
+        <div class="user-avatar">{{ userName.charAt(0) }}</div>
+      </div>
+      <app-button routerLink="/">
+        Вийти
+      </app-button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-wrapper">
+      <!-- Welcome Section -->
+      <section class="welcome-section">
+        <h1 class="welcome-title">Вітаємо, {{ userName }}! 👋</h1>
+        <p class="welcome-subtitle">Ваша панель амбасадора</p>
+      </section>
+
+      <!-- Stats Cards -->
+      <section class="stats-section">
+        <div class="stat-card credits-card">
+          <div class="stat-icon">💎</div>
+          <div class="stat-content">
+            <div class="stat-label">Загальні кредити</div>
+            <div class="stat-value">{{ totalCredits }}</div>
+          </div>
+        </div>
+
+        <div class="stat-card completed-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-content">
+            <div class="stat-label">Завершені завдання</div>
+            <div class="stat-value">{{ completedTasks }}</div>
+          </div>
+        </div>
+
+        <div class="stat-card pending-card">
+          <div class="stat-icon">📋</div>
+          <div class="stat-content">
+            <div class="stat-label">Активні завдання</div>
+            <div class="stat-value">{{ pendingTasks }}</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Active Tasks Section -->
+      <section class="tasks-section">
+        <div class="section-header">
+          <h2 class="section-title">Активні завдання</h2>
+          <span class="task-count">{{ activeTasks.length }}</span>
+        </div>
+
+        <div class="tasks-grid">
+          <div *ngFor="let task of activeTasks" class="task-card" [class]="getStatusClass(task.status)">
+            <div class="task-header">
+              <div class="task-category">{{ task.category }}</div>
+              <div class="task-credits">
+                <span class="credit-icon">💎</span>
+                <span class="credit-value">{{ task.credits }}</span>
+              </div>
+            </div>
+
+            <h3 class="task-title">{{ task.title }}</h3>
+            <p class="task-description">{{ task.description }}</p>
+
+            <div class="task-footer">
+              <div class="task-deadline">
+                <span class="deadline-icon">📅</span>
+                <span class="deadline-text">{{ formatDate(task.deadline) }}</span>
+                <span class="deadline-days" [class.urgent]="getDaysUntilDeadline(task.deadline) <= 2">
+                  ({{ getDaysUntilDeadline(task.deadline) }} днів)
+                </span>
+              </div>
+              <div class="task-status" [class]="getStatusClass(task.status)">
+                {{ getStatusText(task.status) }}
+              </div>
+            </div>
+
+            <app-button class="task-action-btn">
+              <span *ngIf="task.status === 'pending'">Почати</span>
+              <span *ngIf="task.status === 'in-progress'">Продовжити</span>
+            </app-button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Completed Tasks Section -->
+      <section class="tasks-section completed-section" *ngIf="completedTasksList.length > 0">
+        <div class="section-header">
+          <h2 class="section-title">Завершені завдання</h2>
+          <span class="task-count">{{ completedTasksList.length }}</span>
+        </div>
+
+        <div class="completed-tasks-list">
+          <div *ngFor="let task of completedTasksList" class="completed-task-item">
+            <div class="completed-task-info">
+              <div class="completed-task-check">✓</div>
+              <div>
+                <div class="completed-task-title">{{ task.title }}</div>
+                <div class="completed-task-category">{{ task.category }}</div>
+              </div>
+            </div>
+            <div class="completed-task-credits">
+              <span class="credit-icon">💎</span>
+              <span class="credit-value">+{{ task.credits }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+

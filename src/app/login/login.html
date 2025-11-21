@@ -1,0 +1,67 @@
+<div class="login-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <a routerLink="/">
+        <img src="SFLU_ambassador_logo.svg" alt="Logo" class="logo-image" height="100px" width="100px" draggable="false"/>
+      </a>
+    </div>
+    <div class="header-buttons">
+      <app-button routerLink="/">
+        Повернутися
+      </app-button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="form-container">
+      <div class="stars-container">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+      </div>
+
+      <div class="form-card">
+        <h1 class="form-title">Вхід</h1>
+        <p class="form-subtitle">Увійдіть до свого облікового запису</p>
+
+        <form class="login-form">
+          <app-text-field
+            label="Електронна пошта"
+            type="email"
+            placeholder="your@email.com"
+            [value]="email"
+            (valueChange)="email = $event">
+          </app-text-field>
+
+          <app-text-field
+            label="Пароль"
+            type="password"
+            placeholder="Введіть пароль"
+            [value]="password"
+            (valueChange)="password = $event">
+          </app-text-field>
+
+          <div class="forgot-password">
+            <a href="#" class="forgot-link">Забули пароль?</a>
+          </div>
+
+          <app-button class="submit-button" routerLink="/dashboard">
+            Увійти
+          </app-button>
+
+          <div class="register-link">
+            Немає облікового запису? <a routerLink="/register">Зареєструватися</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
