@@ -1,0 +1,46 @@
+.action-button-container {
+  align-items: center;
+  background-color: #1A69E08C;
+  border: 0;
+  font-family: Inter, sans-serif;
+  border-radius: 1000px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  touch-action: manipulation;
+  transition: background-color 300ms ease-in-out;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .action-button-container {
+    padding: 14px 28px;
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 768px) {
+  .action-button-container {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .action-button-container {
+    padding: 10px 20px;
+    font-size: 15px;
+  }
+}
+
