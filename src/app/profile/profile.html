@@ -1,0 +1,150 @@
+<div class="profile-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <a routerLink="/">
+        <img src="/SFLU_ambassador_logo.svg" alt="Logo" class="logo-image" draggable="false"/>
+      </a>
+    </div>
+    <div class="header-actions">
+      <app-button routerLink="/dashboard">
+        Панель
+      </app-button>
+      <app-button routerLink="/">
+        Вийти
+      </app-button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-wrapper">
+      <!-- Profile Header -->
+      <section class="profile-header">
+        <div class="profile-info">
+          <div class="user-avatar-large">{{ userName.charAt(0) }}</div>
+          <div class="profile-details">
+            <h1 class="profile-name">{{ userName }}</h1>
+            <p class="profile-email">{{ userEmail }}</p>
+            <p class="profile-location">📍 {{ userLocation }}</p>
+            <p class="profile-join">Приєднався: {{ getJoinDuration() }} тому</p>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <app-button routerLink="/edit-profile">
+            Редагувати профіль
+          </app-button>
+        </div>
+      </section>
+
+      <!-- Bio Section -->
+      <section class="bio-section">
+        <h3 class="section-title-small">Про мене</h3>
+        <p class="bio-text">{{ userBio }}</p>
+      </section>
+
+      <!-- Level & Credits Section -->
+      <section class="level-credits-section">
+        <div class="level-card">
+          <div class="card-header">
+            <h3 class="card-title">Рівень</h3>
+            <div class="level-badge">{{ currentLevel }}</div>
+          </div>
+          <div class="progress-info">
+            <div class="progress-text">
+              <span>{{ currentXP }} / {{ nextLevelXP }} XP</span>
+              <span class="progress-percent">{{ xpProgress }}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="xpProgress"></div>
+            </div>
+          </div>
+          <p class="level-description">До наступного рівня залишилось {{ nextLevelXP - currentXP }} XP</p>
+        </div>
+
+        <div class="credits-card">
+          <div class="card-header">
+            <h3 class="card-title">Кредити</h3>
+            <div class="credits-icon">💎</div>
+          </div>
+          <div class="credits-value">{{ totalCredits }}</div>
+          <p class="credits-description">Всього зароблено за весь час</p>
+          <app-button>
+            Обміняти на призи
+          </app-button>
+        </div>
+      </section>
+
+      <!-- Statistics Grid -->
+      <section class="statistics-section">
+        <h2 class="section-title">Статистика</h2>
+        <div class="statistics-grid">
+          <div *ngFor="let stat of statistics" class="stat-item">
+            <div class="stat-icon">{{ stat.icon }}</div>
+            <div class="stat-content">
+              <div class="stat-value">{{ stat.value }}</div>
+              <div class="stat-label">{{ stat.label }}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Achievements Section -->
+      <section class="achievements-section">
+        <h2 class="section-title">Досягнення</h2>
+        <div class="achievements-grid">
+          <div *ngFor="let achievement of achievements"
+               class="achievement-card"
+               [class.unlocked]="achievement.unlocked">
+            <div class="achievement-icon">{{ achievement.icon }}</div>
+            <div class="achievement-content">
+              <h4 class="achievement-title">{{ achievement.title }}</h4>
+              <p class="achievement-description">{{ achievement.description }}</p>
+              <div *ngIf="achievement.progress !== undefined" class="achievement-progress">
+                <div class="achievement-progress-bar">
+                  <div class="achievement-progress-fill"
+                       [style.width.%]="(achievement.progress! / achievement.maxProgress!) * 100"></div>
+                </div>
+                <span class="achievement-progress-text">{{ achievement.progress }} / {{ achievement.maxProgress }}</span>
+              </div>
+            </div>
+            <div class="achievement-status">
+              <span *ngIf="achievement.unlocked" class="unlocked-badge">✓</span>
+              <span *ngIf="!achievement.unlocked" class="locked-badge">🔒</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent Activity Section -->
+      <section class="activity-section">
+        <h2 class="section-title">Остання активність</h2>
+        <div class="activity-list">
+          <div *ngFor="let activity of recentActivities" class="activity-item">
+            <div class="activity-icon">{{ getActivityIcon(activity.type) }}</div>
+            <div class="activity-content">
+              <p class="activity-title">{{ activity.title }}</p>
+              <p class="activity-time">{{ formatDate(activity.timestamp) }}</p>
+            </div>
+            <div *ngIf="activity.credits" class="activity-credits">
+              +{{ activity.credits }} 💎
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Animated Stars Background -->
+  <div class="stars-container">
+    <div class="star" *ngFor="let star of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]"
+         [style.left.%]="getRandomPosition(star, 'x')"
+         [style.top.%]="getRandomPosition(star, 'y')"
+         [style.animation-delay.s]="getRandomDelay(star)"
+         [style.animation-duration.s]="getRandomDuration(star)">
+      <div class="star-glow"></div>
+      <div class="star-core" [style.background-color]="getStarColor(star)"></div>
+    </div>
+  </div>
+</div>
+
